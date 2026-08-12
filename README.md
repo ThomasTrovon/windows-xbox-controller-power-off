@@ -11,6 +11,10 @@ Instantly turn off Xbox controllers connected to the official Windows adapter �
 ![x64 platform](https://img.shields.io/badge/platform-x64-informational)
 ![Controllers](https://img.shields.io/badge/controllers-up%20to%208-success)
 
+[![Download the latest release](https://img.shields.io/badge/Download-Latest%20Release-2ea44f?style=for-the-badge&logo=github)](https://github.com/ThomasTrovon/xbox-controller-off/releases/latest)
+
+**[Open the download page and get the latest `XBoxControllerOff.exe`](https://github.com/ThomasTrovon/xbox-controller-off/releases/latest)**
+
 </div>
 
 ## What it is
@@ -214,6 +218,10 @@ Desligue instantaneamente os controles Xbox conectados ao adaptador oficial do W
 ![.NET 10 LTS](https://img.shields.io/badge/.NET-10%20LTS-512BD4?logo=dotnet)
 ![Plataforma x64](https://img.shields.io/badge/plataforma-x64-informational)
 ![Controles](https://img.shields.io/badge/controles-at%C3%A9%208-success)
+
+[![Baixar a versão mais recente](https://img.shields.io/badge/Baixar-Vers%C3%A3o%20mais%20recente-2ea44f?style=for-the-badge&logo=github)](https://github.com/ThomasTrovon/xbox-controller-off/releases/latest)
+
+**[Abra a página de download e baixe o `XBoxControllerOff.exe` mais recente](https://github.com/ThomasTrovon/xbox-controller-off/releases/latest)**
 
 </div>
 
