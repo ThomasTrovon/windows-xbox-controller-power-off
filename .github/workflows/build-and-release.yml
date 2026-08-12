@@ -23,7 +23,7 @@ concurrency:
 env:
   PROJECT_PATH: XBoxControllerOff/XBoxControllerOff.csproj
   SOLUTION_PATH: XBoxControllerOff/XBoxControllerOff.sln
-  ARTIFACT_NAME: xbox-controller-off-win-x64
+  ARTIFACT_NAME: windows-xbox-controller-power-off-win-x64
 
 jobs:
   build:
