@@ -4,7 +4,7 @@
 
 # Xbox Controller Power Off for Windows
 
-Instantly turn off Xbox controllers connected to the official Windows adapter — without removing batteries, unplugging cables, or clearing pairings.
+Instantly turn off Xbox controllers connected through the official Windows adapter or USB — without removing batteries, unplugging cables, or clearing pairings.
 
 ![Windows 10 and 11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?logo=windows)
 ![.NET 10 LTS](https://img.shields.io/badge/.NET-10%20LTS-512BD4?logo=dotnet)
@@ -19,7 +19,7 @@ Instantly turn off Xbox controllers connected to the official Windows adapter �
 
 ## What it is
 
-**Xbox Controller Off** is a small Windows utility that turns off Xbox One, Xbox Series X|S, and Xbox Elite controllers connected through the **official Xbox Wireless Adapter**.
+**Xbox Controller Off** is a small Windows utility that turns off Xbox One, Xbox Series X|S, and Xbox Elite controllers connected through the **official Xbox Wireless Adapter or USB**.
 
 Windows does not provide a visible button for turning these controllers off. Users normally have to hold the Xbox button for several seconds or remove the batteries. This application asks the Windows driver to send the same internal shutdown command used by the Xbox GIP stack.
 
@@ -43,7 +43,7 @@ This version is an unofficial modernization of [mendhak/xbox-controller-off](htt
 | Official Xbox Wireless Adapter + Xbox Series controller | ✅ Tested on real hardware |
 | Official Xbox Wireless Adapter + Xbox One/Elite GIP controller | ✅ Compatible through the same protocol |
 | Up to eight controllers on one adapter | ✅ Implemented |
-| Controller connected by USB and handled by `xboxgip.sys` | 🟡 Protocol-compatible; not yet validated by this project |
+| GIP controller connected by USB and handled by `xboxgip.sys` | ✅ Tested on real hardware |
 | Bluetooth | ❌ Not compatible with the administrative GIP command |
 | Xbox 360 controller/receiver | ❌ Use the XInput version from the original project |
 | 32-bit Windows | ❌ Not supported |
@@ -51,8 +51,8 @@ This version is an unofficial modernization of [mendhak/xbox-controller-off](htt
 ## Requirements
 
 - 64-bit Windows 10 or Windows 11;
-- an official Xbox Wireless Adapter;
-- a compatible controller connected through Xbox GIP;
+- an official Xbox Wireless Adapter or a USB cable;
+- a compatible controller handled by Xbox GIP;
 - administrator approval in the UAC prompt.
 
 The published executable is self-contained. End users do not need to install .NET separately.
@@ -98,7 +98,7 @@ The application currently writes operational log messages in Brazilian Portugues
 
 ## How it works
 
-Xbox One and Series controllers connected through the modern adapter use the **Game Input Protocol (GIP)** rather than the legacy XInput shutdown path.
+Xbox One and Series controllers connected through the modern adapter or USB use the **Game Input Protocol (GIP)** rather than the legacy XInput shutdown path.
 
 The Windows `xboxgip.sys` driver internally exposes two interfaces:
 
@@ -140,7 +140,7 @@ Check whether:
 
 ### The controller works in games but does not turn off
 
-A Bluetooth controller can appear normally through XInput without being accessible through the adapter's administrative interface. Pair it directly with the Xbox Wireless Adapter.
+A Bluetooth controller can appear normally through XInput without being accessible through the GIP administrative interface. Pair it directly with the Xbox Wireless Adapter or connect it by USB.
 
 ### Check for leftover tasks
 
@@ -213,7 +213,7 @@ The complete notices for the reference implementations are preserved in [THIRD_P
 
 # Desligar Controle Xbox no Windows
 
-Desligue instantaneamente os controles Xbox conectados ao adaptador oficial do Windows — sem remover pilhas, cabos ou pareamentos.
+Desligue instantaneamente os controles Xbox conectados pelo adaptador oficial do Windows ou por USB — sem remover pilhas, cabos ou pareamentos.
 
 ![Windows 10 e 11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?logo=windows)
 ![.NET 10 LTS](https://img.shields.io/badge/.NET-10%20LTS-512BD4?logo=dotnet)
@@ -228,7 +228,7 @@ Desligue instantaneamente os controles Xbox conectados ao adaptador oficial do W
 
 ## O que é
 
-O **Xbox Controller Off** é um utilitário pequeno para Windows que desliga controles Xbox One, Xbox Series X|S e Xbox Elite conectados pelo **Xbox Wireless Adapter oficial**.
+O **Xbox Controller Off** é um utilitário pequeno para Windows que desliga controles Xbox One, Xbox Series X|S e Xbox Elite conectados pelo **Xbox Wireless Adapter oficial ou por USB**.
 
 O Windows não oferece um botão visível para desligar esses controles. Normalmente é necessário segurar o botão Xbox por vários segundos ou remover as pilhas. Este aplicativo envia ao driver do próprio Windows o mesmo comando interno de desligamento utilizado pela pilha Xbox GIP.
 
@@ -252,7 +252,7 @@ Esta versão é uma modernização não oficial do projeto [mendhak/xbox-control
 | Xbox Wireless Adapter oficial + controle Xbox Series | ✅ Testado em hardware real |
 | Xbox Wireless Adapter oficial + controle Xbox One/Elite GIP | ✅ Compatível pelo mesmo protocolo |
 | Até oito controles no mesmo adaptador | ✅ Implementado |
-| Controle conectado por cabo USB e reconhecido pelo `xboxgip.sys` | 🟡 Compatível pelo protocolo; ainda não validado neste projeto |
+| Controle GIP conectado por cabo USB e reconhecido pelo `xboxgip.sys` | ✅ Testado em hardware real |
 | Bluetooth | ❌ Não compatível com o comando administrativo GIP |
 | Controle/receptor Xbox 360 | ❌ Utilize a versão XInput do projeto original |
 | Windows de 32 bits | ❌ Não compatível |
@@ -260,8 +260,8 @@ Esta versão é uma modernização não oficial do projeto [mendhak/xbox-control
 ## Requisitos
 
 - Windows 10 ou Windows 11 de 64 bits;
-- Xbox Wireless Adapter oficial;
-- controle compatível conectado pelo protocolo Xbox GIP;
+- Xbox Wireless Adapter oficial ou cabo USB;
+- controle compatível reconhecido pelo Xbox GIP;
 - autorização de administrador no aviso do UAC.
 
 O executável publicado é autossuficiente. O usuário final não precisa instalar o .NET separadamente.
@@ -305,7 +305,7 @@ RESULT=0
 
 ## Como funciona
 
-Controles Xbox One e Series conectados pelo adaptador moderno utilizam o **Game Input Protocol (GIP)**, não o caminho legado de desligamento do XInput.
+Controles Xbox One e Series conectados pelo adaptador moderno ou por USB utilizam o **Game Input Protocol (GIP)**, não o caminho legado de desligamento do XInput.
 
 O driver `xboxgip.sys` do Windows expõe internamente duas interfaces:
 
@@ -347,7 +347,7 @@ Confira se:
 
 ### O controle aparece no jogo, mas não desliga
 
-Se a conexão for Bluetooth, o controle pode aparecer normalmente como XInput, mas não estará acessível pela interface administrativa do adaptador. Pareie-o diretamente com o Xbox Wireless Adapter.
+Se a conexão for Bluetooth, o controle pode aparecer normalmente como XInput, mas não estará acessível pela interface administrativa GIP. Pareie-o diretamente com o Xbox Wireless Adapter ou conecte-o por USB.
 
 ### Verificar tarefas residuais
 
