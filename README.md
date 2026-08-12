@@ -193,9 +193,10 @@ XBoxControllerOff\bin\Release\net10.0-windows\win-x64\publish\XBoxControllerOff.
 
 ## Credits
 
-- [Mendhak](https://github.com/mendhak), author of the original `xbox-controller-off` project;
-- [Vektast/XBOX_Controller_PW_OFF](https://github.com/Vektast/XBOX_Controller_PW_OFF), GIP PowerShell implementation used as a technical reference;
-- [Leclowndu93150/xbpoweroff](https://github.com/Leclowndu93150/xbpoweroff), GIP C implementation used as a technical reference;
+- [Thomas Nilton de Carvalho Vanini (@ThomasTrovon)](https://github.com/ThomasTrovon), author and maintainer of this modernized version, responsible for the .NET 10 application, integration of the Xbox GIP implementation, multi-controller support, packaging, documentation and CI/CD automation;
+- [Mendhak](https://github.com/mendhak), creator of the original `xbox-controller-off` project and its Xbox 360/XInput implementation;
+- [Vektast/XBOX_Controller_PW_OFF](https://github.com/Vektast/XBOX_Controller_PW_OFF), whose Xbox GIP implementation was used as a technical reference;
+- [Leclowndu93150/xbpoweroff](https://github.com/Leclowndu93150/xbpoweroff), whose Xbox GIP implementation was used as a technical reference;
 - public [Microsoft GameInput Protocol USB](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-gipusb/e7c90904-5e21-426e-b9ad-d82adeee0dbc) documentation.
 
 The complete notices for the reference implementations are preserved in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
@@ -399,9 +400,10 @@ O arquivo `TurnControllerOff.ps1` foi preservado para manter um ponto de entrada
 
 ## Créditos
 
-- [Mendhak](https://github.com/mendhak), autor do projeto original `xbox-controller-off`;
-- [Vektast/XBOX_Controller_PW_OFF](https://github.com/Vektast/XBOX_Controller_PW_OFF), implementação GIP em PowerShell usada como referência técnica;
-- [Leclowndu93150/xbpoweroff](https://github.com/Leclowndu93150/xbpoweroff), implementação GIP em C usada como referência técnica;
+- [Thomas Nilton de Carvalho Vanini (@ThomasTrovon)](https://github.com/ThomasTrovon), autor e mantenedor desta versão modernizada, responsável pela aplicação em .NET 10, integração da implementação Xbox GIP, suporte a múltiplos controles, empacotamento, documentação e automação de CI/CD;
+- [Mendhak](https://github.com/mendhak), criador do projeto original `xbox-controller-off` e de sua implementação para Xbox 360/XInput;
+- [Vektast/XBOX_Controller_PW_OFF](https://github.com/Vektast/XBOX_Controller_PW_OFF), cuja implementação Xbox GIP foi utilizada como referência técnica;
+- [Leclowndu93150/xbpoweroff](https://github.com/Leclowndu93150/xbpoweroff), cuja implementação Xbox GIP foi utilizada como referência técnica;
 - documentação pública [Microsoft GameInput Protocol USB](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-gipusb/e7c90904-5e21-426e-b9ad-d82adeee0dbc).
 
 Os avisos integrais das implementações de referência estão preservados em [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
