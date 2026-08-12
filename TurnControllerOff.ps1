@@ -1,28 +1,16 @@
-#Standalone script. 
-#  Start > run > gpedit.msc
-#  Computer configuration > Windows settings > Scripts 
-#  Add this script under shutdown scripts
-#You'll need to run this too: Set-ExecutionPolicy Unrestricted
+$ErrorActionPreference = 'Stop'
 
-[string]$SourceCode =  @"
-    using System.Runtime.InteropServices;
-    using System;
-    public static class StaticMethods
-	{
-		[DllImport("XInput1_3.dll", CharSet = CharSet.Auto, EntryPoint = "#103")]
-		public static extern int FnOff(int i);
+# O PowerShell permanece apenas como lançador para preservar o ponto de entrada
+# do projeto original. A regra GIP vive somente no executável moderno em C#.
+$candidates = @(
+    (Join-Path $PSScriptRoot 'XBoxControllerOff.exe'),
+    (Join-Path $PSScriptRoot 'XBoxControllerOff\bin\Release\net10.0-windows\win-x64\publish\XBoxControllerOff.exe')
+)
 
-		public static void TurnOff()
-		{
-			for (int i = 0; i < 4; i++)
-			{
-				FnOff(i);
-			}
-		}
-	}
-"@
+$executable = $candidates | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } | Select-Object -First 1
+if (-not $executable) {
+    throw 'XBoxControllerOff.exe não foi encontrado. Compile o projeto com dotnet publish antes de executar este lançador.'
+}
 
-	
-add-type -TypeDefinition $SourceCode
-
-[StaticMethods]::TurnOff()
+$process = Start-Process -FilePath $executable -Wait -PassThru
+exit $process.ExitCode
