@@ -1,0 +1,181 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - "v*"
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+# Execuções comuns recebem apenas leitura. O job de Release amplia as permissões
+# somente quando o gatilho é uma tag, reduzindo o alcance do token automático.
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+env:
+  PROJECT_PATH: XBoxControllerOff/XBoxControllerOff.csproj
+  SOLUTION_PATH: XBoxControllerOff/XBoxControllerOff.sln
+  ARTIFACT_NAME: xbox-controller-off-win-x64
+
+jobs:
+  build:
+    name: Validate and build
+    runs-on: windows-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out the source
+        uses: actions/checkout@v7
+
+      - name: Install the .NET SDK from global.json
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Restore dependencies
+        shell: pwsh
+        run: dotnet restore $env:PROJECT_PATH
+
+      - name: Verify code formatting
+        shell: pwsh
+        run: dotnet format $env:PROJECT_PATH --verify-no-changes --no-restore --verbosity minimal
+
+      - name: Build the solution
+        shell: pwsh
+        run: dotnet build $env:SOLUTION_PATH --configuration Release --no-restore --verbosity minimal
+
+      - name: Determine the application version
+        id: version
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF_TYPE -eq "tag") {
+              if ($env:GITHUB_REF_NAME -match '^v(?<version>\d+\.\d+\.\d+)(?:-[0-9A-Za-z.-]+)?$') {
+                  $packageVersion = $env:GITHUB_REF_NAME.Substring(1)
+                  $numericVersion = $Matches.version
+              }
+              else {
+                  throw "The tag '$env:GITHUB_REF_NAME' must follow the vMAJOR.MINOR.PATCH format."
+              }
+          }
+          else {
+              [xml]$project = Get-Content -LiteralPath $env:PROJECT_PATH -Raw -Encoding UTF8
+              $packageVersion = [string]$project.Project.PropertyGroup.Version
+              $numericVersion = ($packageVersion -split '[-+]')[0]
+          }
+
+          if ([string]::IsNullOrWhiteSpace($packageVersion) -or
+              $numericVersion -notmatch '^\d+\.\d+\.\d+$') {
+              throw "A valid semantic version could not be determined."
+          }
+
+          "package=$packageVersion" >> $env:GITHUB_OUTPUT
+          "file=$numericVersion.0" >> $env:GITHUB_OUTPUT
+          "Application version: $packageVersion" >> $env:GITHUB_STEP_SUMMARY
+
+      - name: Publish the self-contained executable
+        shell: pwsh
+        run: |
+          $publishDirectory = Join-Path $env:RUNNER_TEMP "publish"
+
+          dotnet publish $env:PROJECT_PATH `
+              --configuration Release `
+              --no-restore `
+              --output $publishDirectory `
+              -p:Version="${{ steps.version.outputs.package }}" `
+              -p:FileVersion="${{ steps.version.outputs.file }}" `
+              -p:AssemblyVersion="${{ steps.version.outputs.file }}"
+
+          $executable = Join-Path $publishDirectory "XBoxControllerOff.exe"
+          if (-not (Test-Path -LiteralPath $executable -PathType Leaf)) {
+              throw "The published executable was not created."
+          }
+
+          $file = Get-Item -LiteralPath $executable
+          if ($file.Length -le 0) {
+              throw "The published executable is empty."
+          }
+
+          Copy-Item -LiteralPath "THIRD_PARTY_NOTICES.md" -Destination $publishDirectory
+
+          $hash = (Get-FileHash -LiteralPath $executable -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  XBoxControllerOff.exe" |
+              Set-Content -LiteralPath (Join-Path $publishDirectory "XBoxControllerOff.exe.sha256") -Encoding utf8NoBOM
+
+          "Executable size: $($file.Length) bytes" >> $env:GITHUB_STEP_SUMMARY
+          "SHA-256: ``$hash``" >> $env:GITHUB_STEP_SUMMARY
+
+      - name: Upload the validated build
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: |
+            ${{ runner.temp }}/publish/XBoxControllerOff.exe
+            ${{ runner.temp }}/publish/XBoxControllerOff.exe.sha256
+            ${{ runner.temp }}/publish/THIRD_PARTY_NOTICES.md
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+
+  release:
+    name: Publish GitHub Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: windows-latest
+    timeout-minutes: 10
+    permissions:
+      actions: read
+      contents: write
+      id-token: write
+      attestations: write
+
+    steps:
+      - name: Download the validated build
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ${{ runner.temp }}/release
+
+      # A atestação vincula o binário ao repositório, commit, tag e execução que
+      # o produziram. Usuários podem verificá-la com o GitHub CLI.
+      - name: Attest the executable provenance
+        uses: actions/attest@v4
+        with:
+          subject-path: ${{ runner.temp }}/release/XBoxControllerOff.exe
+
+      - name: Create the bilingual Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $notes = @"
+          ## English
+
+          Automated release of Xbox Controller Off $env:GITHUB_REF_NAME for Windows x64.
+
+          Download ``XBoxControllerOff.exe`` and accept the UAC prompt. The executable is self-contained and does not require a separate .NET installation. Use ``XBoxControllerOff.exe.sha256`` to verify the download.
+
+          ## Português (Brasil)
+
+          Versão automatizada do Xbox Controller Off $env:GITHUB_REF_NAME para Windows x64.
+
+          Baixe ``XBoxControllerOff.exe`` e aceite o aviso do UAC. O executável é autossuficiente e não exige instalação separada do .NET. Use ``XBoxControllerOff.exe.sha256`` para conferir o download.
+          "@
+
+          gh release create $env:GITHUB_REF_NAME `
+              "$env:RUNNER_TEMP/release/XBoxControllerOff.exe" `
+              "$env:RUNNER_TEMP/release/XBoxControllerOff.exe.sha256" `
+              "$env:RUNNER_TEMP/release/THIRD_PARTY_NOTICES.md" `
+              --repo $env:GITHUB_REPOSITORY `
+              --verify-tag `
+              --title "Xbox Controller Off $env:GITHUB_REF_NAME" `
+              --notes $notes `
+              --generate-notes `
+              --latest
