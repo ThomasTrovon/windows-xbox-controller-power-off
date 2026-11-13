@@ -77,7 +77,8 @@ jobs:
           }
 
           "package=$packageVersion" >> $env:GITHUB_OUTPUT
-          "file=$numericVersion.0" >> $env:GITHUB_OUTPUT
+          $fileVersion = [string]([xml](Get-Content -LiteralPath $env:PROJECT_PATH -Raw -Encoding UTF8)).Project.PropertyGroup.FileVersion
+          "file=$fileVersion" >> $env:GITHUB_OUTPUT
           "Application version: $packageVersion" >> $env:GITHUB_STEP_SUMMARY
 
       - name: Publish the self-contained executable
